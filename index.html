@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>家庭保障升級方案 - 健檢報告</title>
+    <script src="https://cdn.plot.ly/plotly-2.20.0.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #e44d42;
+            --secondary-color: #f39c12;
+            --bg-light: #f9f9f9;
+            --bg-white: #fff;
+            --text-dark: #2c3e50;
+            --text-light: #555;
+            --gradient-primary: linear-gradient(135deg, #e44d42, #f39c12);
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            line-height: 1.7;
+        }
+
+        .dashboard {
+            max-width: 210mm;
+            margin: 20px auto;
+            padding: 10mm;
+            background-color: var(--bg-white);
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .report-header {
+            text-align: center;
+            padding: 15px 0;
+        }
+
+        .report-header h1 {
+            color: var(--primary-color);
+            font-size: 2.2em;
+            margin-bottom: 5px;
+        }
+
+        .section {
+            padding: 15px 20px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+        }
+
+        .section-title {
+            color: var(--primary-color);
+            font-size: 1.8em;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+        }
+
+        .chart-container {
+            width: 100%;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .chart-item {
+            background-color: var(--bg-white);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .chart-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .chart-item h4 {
+            color: var(--text-dark);
+            margin-bottom: 10px;
+            font-size: 1.3em;
+            display: flex;
+            align-items: center;
+        }
+
+        .chart-item h4 i {
+            margin-right: 10px;
+            color: var(--primary-color);
+        }
+
+        .highlight {
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        .action-section {
+            text-align: center;
+            padding: 30px 0;
+            background-color: #fff8e1;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .action-button {
+            padding: 14px 35px;
+            font-size: 1.2em;
+            background: var(--gradient-primary);
+            color: var(--bg-white);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .action-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(228, 77, 66, 0.3);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f0f0f0;
+            font-weight: bold;
+        }
+
+        /* 案例故事卡片樣式 */
+        .case-study-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .case-study-card {
+            background-color: var(--bg-white);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .case-study-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .case-study-card h4 {
+            color: var(--primary-color);
+            font-size: 1.4em;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .case-study-card h4 i {
+            margin-right: 10px;
+        }
+
+        .case-study-card p {
+            color: var(--text-light);
+            line-height: 1.6;
+            font-size: 1em;
+        }
+
+        .case-study-card p .highlight {
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <!-- 李文鈴 女士 (55歲) -->
+    <div class="dashboard">
+        <header class="report-header">
+            <h1>家庭保障升級方案 - 健檢報告</h1>
+            <p>李文鈴 女士 (55歲)</p>
+        </header>
+        <section class="section">
+            <h2 class="section-title">保障需求分析</h2>
+            <div class="chart-container">
+                <div class="chart-item">
+                    <h4><i class="fas fa-hospital"></i> 醫療日額：現有 vs. 建議 (元/天)</h4>
+                    <div id="lWenLingDailyMedicalChart"></div>
+                    <p>現有 <span class="highlight">1000元</span> 建議 <span class="highlight">3000元</span></p>
+                </div>
+                <div class="chart-item">
+                    <h4><i class="fas fa-pills"></i> 醫療雜費保險</h4>
+                    <div id="lWenLingMedicalExpenseChart"></div>
+                    <p>現有 <span class="highlight">無</span> 建議 <span class="highlight">補強</span></p>
+                </div>
+                <div class="chart-item">
+                    <h4><i class="fas fa-heartbeat"></i> 重大疾病保險金 (萬元)</h4>
+                    <div id="lWenLingCriticalIllnessChart"></div>
+                    <p>現有 <span class="highlight">0元</span> 建議 <span class="highlight">100萬元</span></p>
+                </div>
+                <div class="chart-item">
+                    <h4><i class="fas fa-briefcase-medical"></i> 癌症醫療金 (萬元)</h4>
+                    <div id="lWenLingCancerBenefitChart"></div>
+                    <p>現有 <span class="highlight">8萬元</span> 建議 <span class="highlight">50萬元</span></p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- 家庭保障缺口總結 -->
+    <div class="dashboard">
+        <header class="report-header">
+            <h1>家庭保障升級方案 - 家庭總覽</h1>
+            <p>李文鈴 女士 (55歲) 家庭 - 保障總體檢</p>
+        </header>
+        <section class="section">
+            <h2 class="section-title">家庭保障缺口總結</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>成員</th>
+                        <th>保障缺口</th>
+                        <th>建議補強內容</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>李文鈴 女士 (55歲)</td>
+                        <td>醫療日額、醫療雜費、重疾險、癌症醫療金</td>
+                        <td>醫療日額提升至 3000元/天，補強醫療雜費，重疾險 100萬元，癌症醫療金 50萬元</td>
+                    </tr>
+                    <tr>
+                        <td>陳佳宏 先生 (56歲)</td>
+                        <td>醫療日額、醫療雜費、重疾險、癌症醫療金</td>
+                        <td>醫療日額提升至 4000元/天，補強醫療雜費，重疾險 100萬元，癌症醫療金 100萬元</td>
+                    </tr>
+                    <tr>
+                        <td>陳品仔 小姐 (25歲)</td>
+                        <td>醫療日額、醫療雜費、癌症醫療金、長照險</td>
+                        <td>醫療日額提升至 2000元/天，補強醫療雜費，癌症醫療金 50萬元，長照險 3萬元/月</td>
+                    </tr>
+                    <tr>
+                        <td>李清華 先生 (76歲)</td>
+                        <td>基礎醫療、重疾險、長照險</td>
+                        <td>補強基礎醫療、重疾險、長照險</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+        <section class="section">
+            <h2 class="section-title">高額花費案例故事</h2>
+            <div class="case-study-container">
+                <!-- 醫療日額 -->
+                <div class="case-study-card">
+                    <h4><i class="fas fa-hospital"></i> 醫療日額</h4>
+                    <p>王先生因心臟問題住院 15 天，單人病房費用每日 4000 元，總計 6 萬元。幸好他有醫療日額 4000 元/天，保險理賠 6 萬元，<span class="highlight">完全 cover 病房費用，讓他能安心療養</span>。</p>
+                </div>
+                <!-- 醫療雜費 -->
+                <div class="case-study-card">
+                    <h4><i class="fas fa-pills"></i> 醫療雜費</h4>
+                    <p>林先生因肝癌住院，使用新型標靶藥物，每月藥費高達 15 萬元。幸好他有高額實支實付保障，保險公司理賠了大部分費用，<span class="highlight">讓他能安心接受治療，不必為錢煩惱</span>。</p>
+                </div>
+                <!-- 重疾險 -->
+                <div class="case-study-card">
+                    <h4><i class="fas fa-heartbeat"></i> 重疾險</h4>
+                    <p>陳女士確診乳癌，治療期間無法工作，收入中斷。幸好她有 100 萬元重疾險，<span class="highlight">這筆錢成為她的生活費，讓她能專心抗癌，不必擔心經濟壓力</span>。</p>
+                </div>
+                <!-- 癌症醫療金 -->
+                <div class="case-study-card">
+                    <h4><i class="fas fa-briefcase-medical"></i> 癌症醫療金</h4>
+                    <p>吳先生罹患肺癌，使用免疫療法，每月醫療費高達 20 萬元。幸好他有 100 萬元癌症醫療金，<span class="highlight">這筆錢成為他的救命錢，讓他能持續接受治療，不放棄希望</span>。</p>
+                </div>
+                <!-- 長照險 -->
+                <div class="case-study-card">
+                    <h4><i class="fas fa-wheelchair"></i> 長照險</h4>
+                    <p>張爺爺因失智症需要長期照護，每月看護費用 6 萬元，一年高達 72 萬元。幸好他年輕時投保長照險，<span class="highlight">保險金減輕了子女的負擔，也讓他獲得更好的照護品質</span>。</p>
+                </div>
+            </div>
+        </section>
+        <section class="action-section">
+            <h2>保障升級建議</h2>
+            <p>立即諮詢專業顧問，量身規劃更完善的保障方案！</p>
+            <button class="action-button">立即預約諮詢</button>
+        </section>
+    </div>
+
+    <script>
+        // 李文鈴 - 保障數據
+        const lWenLingDailyMedicalData = [1000, 3000];
+        const lWenLingMedicalExpenseData = [0, 1];
+        const lWenLingCriticalIllnessData = [0, 100];
+        const lWenLingCancerBenefitData = [8, 50];
+
+        // 圖表繪製
+        function createChart(elementId, data, labels) {
+            Plotly.newPlot(elementId, [{
+                x: labels,
+                y: data,
+                type: 'bar',
+                marker: { color: ['#f39c12', '#2ecc71'] }
+            }], { height: 250 });
+        }
+
+        createChart('lWenLingDailyMedicalChart', lWenLingDailyMedicalData, ["現有", "建議"]);
+        createChart('lWenLingMedicalExpenseChart', lWenLingMedicalExpenseData, ["現有", "建議"]);
+        createChart('lWenLingCriticalIllnessChart', lWenLingCriticalIllnessData, ["現有", "建議"]);
+        createChart('lWenLingCancerBenefitChart', lWenLingCancerBenefitData, ["現有", "建議"]);
+    </script>
+</body>
+</html>
